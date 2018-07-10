@@ -1,0 +1,6 @@
+django
+Scrapy
+redis
+celery
+django-rest-framework
+scrapy-djangoitem

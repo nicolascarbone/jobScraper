@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+
+  # frontend:
+  #   expose: 
+  #     - "80"
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - .:
+  backend:
+    restart: always
+    build: .
+    expose:
+      - "8000"
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www/simplify/ #watch for changes
+    command: sh run_migrations.sh
+
+  redis:
+    image: redis
+    volumes:
+      - 'redis:/data'
+    ports:
+      - '6379:6379'
+
+  worker:
+    build:
+      context: .
+    volumes:
+      - .:/var/www/simplify/
+    links:
+      - redis
+    depends_on:
+      - redis
+    command: celery -A simplify worker -l info
+
+volumes:
+  redis:
